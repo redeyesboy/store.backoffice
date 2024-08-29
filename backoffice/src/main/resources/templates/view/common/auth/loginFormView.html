@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/basicLayout}">
+
+	<head>
+		<title>Login</title>
+	</head>
+
+	<body>
+
+		<th:block layout:fragment="content">
+
+			<!-- /view/common/auth/loginFormView.html -->
+			<div class="content" data-view="loginFormView">
+				<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh;">
+					<div>
+						<form id="form" th:action="@{/auth/login.do}" method="post" style="width: 400px;"></form>
+						<button type="button" id="loginBtn" style="width: -webkit-fill-available;">
+							<b>Sign In</b>
+						</button>
+					</div>
+				</div>
+			</div>
+
+		</th:block>
+
+		<th:block layout:fragment="script">
+			<script th:inline="javascript" type="text/javascript">
+			/*<![CDATA[*/
+
+				$(document).ready(function ( ) {
+
+					const $VIEW = $('[data-view="loginFormView"]');
+
+					$VIEW.find("#form").kendoForm({
+						size: 'large',
+						buttonsTemplate: '',
+						focusFirst: true,
+						items: [
+							{ field: 'name', label: { text: '<b>e-mail</b>', encoded: false } },
+							{ field: 'password', label: { text: '<b>password</b>', encoded: false },
+							  editor: ( container, options ) => {
+								const { field } = options;
+								const _input = $('<input type="password"/>');
+								_input.attr({
+									'id': field,
+									'name': field,
+									'title': field,
+									'autocomplete': 'off',
+									'aria-labelledby': `${field}-form-label`,
+									'data-bind': `value: ${field}`,
+									'aria-describedby': `${field}-form-hint`,
+									'data-size': 'large'
+								});
+								_input.appendTo(container);
+								_input.kendoTextBox();
+							  }
+							}
+						]
+					});
+
+					$VIEW.find("#loginBtn").kendoButton({
+						size: "large",
+						click: ( e ) => {
+							const _form = $VIEW.find("#form");
+							const { name, password } = _form.serializeObject();
+							if ( StringUtils.isEmpty(name) ) {
+								Ui.alert('이메일을 입력해주세요.');
+								return false;
+							}
+							if ( StringUtils.isEmpty(password) ) {
+								Ui.alert('비밀번호를 입력해주세요.');
+								return false;
+							}
+							_form.submit();
+						}
+					});
+
+					//TODO delete
+					$VIEW.find('[name="name"]').val('test@adm.com');
+					$VIEW.find('[name="password"]').val('1234');
+
+				});
+
+			/*]]>*/
+			</script>
+		</th:block>
+
+	</body>
+
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/defaultLayout}">
+
+	<head>
+		<title>Main</title>
+	</head>
+
+	<body>
+
+		<th:block layout:fragment="content">
+
+			<!-- /view/main/mainView.html -->
+			<div data-view="mainView">
+				<!--/*
+				<th:block th:each="idx : ${#numbers.sequence(0, 100)}">
+				Main Content<br/>
+				</th:block>
+				*/-->
+
+				<a href="/auth/logout.do">logout</a>
+			</div>
+
+		</th:block>
+
+		<th:block layout:fragment="script">
+			<script th:inline="javascript" type="text/javascript">
+			/*<![CDATA[*/
+
+				$(document).ready(function ( ) {
+
+					const $VIEW = $('[data-view="mainView"]');
+
+				});
+
+			/*]]>*/
+			</script>
+		</th:block>
+
+	</body>
+
+</html>

@@ -8,16 +8,24 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 
+import co.kr.store.bo.common.Constants;
+import co.kr.store.bo.core.config.database.annotation.StoreMapper;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
+@MapperScan(
+	basePackages = Constants.BASE_PACKAGE
+	, annotationClass = StoreMapper.class
+	, sqlSessionTemplateRef = "sqlSessionTemplate"
+)
 public class MyBatisConfig {
 
 	private final ApplicationContext applicationContext;
@@ -32,7 +40,7 @@ public class MyBatisConfig {
 		configuration.setJdbcTypeForNull(JdbcType.NULL);
 		configuration.setCallSettersOnNulls(true);
 		Resource[] mapperLocations = ArrayUtils.addAll(
-			applicationContext.getResources("classpath:/mapper/mall/**/*.xml")
+			applicationContext.getResources("classpath:/mapper/store/**/*.xml")
 		);
 		SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
 		sqlSessionFactoryBean.setDataSource(dataSource);

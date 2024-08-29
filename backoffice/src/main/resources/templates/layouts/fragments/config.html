@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+	<th:block th:fragment="fragment">
+
+		<!-- /layout/fragments/config.html -->
+		<meta charset="UTF-8">
+
+		<link rel="stylesheet" th:href="@{/css/lib/normalize.min.css}"/>
+		<link rel="stylesheet" th:href="@{/css/lib/kendoui/default-main.css}"/>
+
+		<script th:src="@{/js/lib/jquery/jquery-3.7.0.min.js}"></script>
+		<script th:src="@{/js/lib/jquery/jquery.serialize-object.min.js}"></script>
+		<script th:src="@{/js/lib/kendoui/kendo.all.min.js}"></script>
+		<script th:src="@{/js/lib/kendoui/kendo-ui-license.js}"></script>
+
+		<script th:src="@{/js/common/utils/StringUtils.js}"></script>
+		<script th:src="@{/js/common/utils/UiUtils.js}"></script>
+		<script th:src="@{/js/common/commonUtils.js}"></script>
+
+	</th:block>
+
+</html>
