@@ -1,0 +1,12 @@
+@charset "UTF-8";
+
+.grid_no_data {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.grid_column_btn {
+	font-weight: 600;
+}

@@ -19,7 +19,11 @@ class StringUtils {
 	}
 
 	static isNotEmpty ( value ) {
-		return !this.isEmpty(value);;
+		return !this.isEmpty(value);
+	}
+
+	static nvl ( value, replaceValue ) {
+		return this.isEmpty(value) ? replaceValue : value;
 	}
 
 }

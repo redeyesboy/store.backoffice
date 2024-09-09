@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+	<body>
+
+		<style type="text/css">
+
+		</style>
+
+		<!-- /view/system/commonCodeListView.html	 -->
+		<div class="pop_detail_content" data-view="commonCodeDetailView" style="width: 80vw;">
+
+			<input type="hidden" name="mode" th:value="${reqDto.mode}"/>
+
+			<table class="form-table">
+				<colgroup>
+					<col style="width: 15%;"/>
+					<col />
+					<col style="width: 15%;"/>
+					<col />
+					<col style="width: 15%;"/>
+					<col />
+				</colgroup>
+				<tbody>
+					<tr>
+						<th>그룹코드</th>
+						<td>
+							<input class="kendo-ui-textBox" name="grpCodeId" placeholder="그룹코드" th:readonly="${#strings.equals('U', reqDto.mode)}"/>
+						</td>
+						<th>그룹코드명</th>
+						<td>
+							<input class="kendo-ui-textBox" name="grpCodeNm" placeholder="그룹코드명"/>
+						</td>
+						<th>사용여부</th>
+						<td>
+							<ul id="useYn"></ul>
+						</td>
+					</tr>
+					<tr>
+						<th>그룹코드설명</th>
+						<td colspan="5">
+							<textarea class="kendo-ui-textArea" name="grpCodeDesc" placeholder="그룹코드 설명을 입력해주세요."></textarea>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="grid_wrap">
+				<div class="grid"></div>
+			</div>
+
+			<div style="text-align: end;">
+				<th:block th:if="${#strings.equals('U', reqDto.mode)}">
+					<button type="button" th:id="|BTN_${#strings.randomAlphanumeric(10)}|" class="btnDelete">
+						<span style="width: 6em; font-weight: 600;">삭제</span>
+					</button>
+				</th:block>
+				<button type="button" th:id="|BTN_${#strings.randomAlphanumeric(10)}|" class="btnSave">
+					<span style="width: 6em; font-weight: 600;">저장</span>
+				</button>
+			</div>
+
+		</div>
+
+		<script th:inline="javascript" type="text/javascript">
+		/*<![CDATA[*/
+
+			$(document).ready(function () {
+
+				const sample_dt1 = {
+					grpCodeId: 'CODE_0001',
+					grpCodeNm: '그룹코드명01',
+					useYn: 'Y',
+					grpCodeDesc: '설명설명설명',
+					codeList: [
+						{ grpCodeId: 'CODE_0001', codeId: '01', codeNm: 'codeNm01', useYn: 'Y', dispOrd: 1, refVal01: 'f01', refVal02: '', refVal03: '', refVal04: '', refVal05: '', mode: 'U' },
+						{ grpCodeId: 'CODE_0001', codeId: '02', codeNm: 'codeNm02', useYn: 'Y', dispOrd: 2, refVal01: 'f01', refVal02: 'f02', refVal03: '', refVal04: '', refVal05: '', mode: 'U' },
+						{ grpCodeId: 'CODE_0001', codeId: '03', codeNm: 'codeNm03', useYn: 'Y', dispOrd: 3, refVal01: 'f01', refVal02: '', refVal03: 'f03', refVal04: '', refVal05: '', mode: 'U' },
+						{ grpCodeId: 'CODE_0001', codeId: '04', codeNm: 'codeNm04', useYn: 'Y', dispOrd: 4, refVal01: 'f01', refVal02: '', refVal03: '', refVal04: 'f04', refVal05: '', mode: 'U' },
+						{ grpCodeId: 'CODE_0001', codeId: '05', codeNm: 'codeNm05', useYn: 'Y', dispOrd: 5, refVal01: 'f01', refVal02: '', refVal03: '', refVal04: '', refVal05: 'f05', mode: 'U' }
+					]
+				}
+
+				const $VIEW = $('[data-view="commonCodeDetailView"]');
+
+				const fnSetDataSource = function ( data=[] ) {
+					return new kendo.data.DataSource({
+						data: data,
+						schema: {
+							model: {
+								id: 'codeId',
+								fields: {
+									dispOrd: { type: 'number' }
+								}
+							},
+							total: () => { return 99 }
+						}
+					});
+				}
+
+				const fnSetData = function ( ) {
+
+					if ( $VIEW.find('[name="mode"]').val() == 'C' ) {
+						return false;
+					}
+
+					const { grpCodeId, grpCodeNm, useYn, grpCodeDesc, codeList } = sample_dt1;
+					$VIEW.find('[name="grpCodeId"]').data('kendoTextBox').value(grpCodeId);
+					$VIEW.find('[name="grpCodeNm"]').data('kendoTextBox').value(grpCodeNm);
+					$VIEW.find('#useYn').getKendoRadioGroup().value(grpCodeId);
+					$VIEW.find('[name="grpCodeDesc"]').data('kendoTextArea').value(grpCodeDesc);
+					$VIEW.find(".grid").data('kendoGrid').setDataSource(fnSetDataSource(codeList));
+				}
+
+				$VIEW.find('.kendo-ui-textBox').kendoTextBox({
+					fillMode: 'outline'
+				});
+
+				$VIEW.find('.kendo-ui-textArea').kendoTextArea({
+					fillMode: 'outline',
+					rows: 5
+				});
+
+				$VIEW.find("#useYn").kendoRadioGroup({
+					inputName: 'useYn',
+					layout: 'horizontal',
+					items: [
+						{ label: 'Yes', value: 'Y' },
+						{ label: 'No', value: 'N' },
+					],
+					value: 'Y'
+				});
+
+				$VIEW.find(".grid").kendoGrid({
+					sortable: false,
+					resizable: true,
+					pageable: false,
+					height: '350px',
+					noRecords: {
+						template: ( ) => {
+							return `
+								<div class="grid_no_data">
+									<b>데이터가 없습니다.</b>
+								</div>
+							`;
+						}
+					},
+					columns: [
+						{ selectable: true, width: '45px', headerAttributes: { style: "text-align: center; justify-content: center" }, attributes: { style: 'text-align: center;' }, },
+						{
+							field: 'codeId',
+							title: '코드',
+							headerAttributes: { style: "text-align: center; justify-content: center" },
+							width: '20em',
+							editable: ( data ) => {
+								return data.isNew();
+							}
+						},
+						{
+							field: 'codeNm',
+							title: '코드명',
+							headerAttributes: { style: "text-align: center; justify-content: center" },
+							width: '20em',
+						},
+						{
+							field: 'useYn',
+							title: '사용여부',
+							headerAttributes: { style: "text-align: center; justify-content: center" },
+							width: '6em',
+							attributes: { style: 'text-align: center;' },
+							values: [
+								{ text: 'Y', value: 'Y' },
+								{ text: 'N', value: 'N' },
+							]
+						},
+						{
+							field: 'dispOrd',
+							title: '노출순서',
+							width: '6em',
+							headerAttributes: { style: "text-align: center; justify-content: center" },
+							attributes: { style: 'text-align: center;' },
+						},
+						{
+							field: 'refVal01',
+							title: '참조값1',
+							width: '8em',
+							headerAttributes: { style: "text-align: center; justify-content: center" },
+						},
+						{
+							field: 'refVal02',
+							title: '참조값2',
+							width: '8em',
+							headerAttributes: { style: "text-align: center; justify-content: center" },
+						},
+						{
+							field: 'refVal03',
+							title: '참조값3',
+							width: '8em',
+							headerAttributes: { style: "text-align: center; justify-content: center" },
+						},
+						{
+							field: 'refVal04',
+							title: '참조값4',
+							width: '8em',
+							headerAttributes: { style: "text-align: center; justify-content: center" },
+						},
+						{
+							field: 'refVal05',
+							title: '참조값5',
+							width: '8em',
+							headerAttributes: { style: "text-align: center; justify-content: center" },
+						},
+					],
+					editable: {
+						mode: 'incell'
+					},
+					dataSource:fnSetDataSource(),
+					selectable: 'multiple',
+					toolbar: [
+						{
+							type: 'button',
+							text: '추가',
+							icon: 'plus',
+							click: ( e ) => {
+								const _grid = $VIEW.find(".grid").data('kendoGrid');
+								_grid.addRow();
+							}
+						},
+						{
+							type: 'button',
+							text: '삭제',
+							icon: 'minus',
+							click: ( e ) => {
+								const _grid = $VIEW.find(".grid").data('kendoGrid');
+								const _selectedDatas = _grid.getSelectedData();
+								if ( ObjectUtils.isEmpty(_selectedDatas ) ) {
+									Ui.alert('삭제할 대상을 선택해주세요.');
+									return;
+								}
+								console.log('dddddddddddd');
+							}
+						},
+					],
+					cellClose: ( { sender:_grid } ) => {
+						const _dataSource = _grid.dataSource;
+						const _data = _dataSource.data();
+						_data.sort((a, b) => a.dispOrd - b.dispOrd );
+						_grid.setDataSource(fnSetDataSource(_data));
+					},
+					remove: ( { model, sender:_grid } ) => {
+
+					}
+				});
+
+				$VIEW.find(".btnDelete").kendoButton({
+					themeColor: 'error',
+					fillMode: 'solid',
+					size: 'large',
+					click: ( e ) => {
+						console.log(e);
+						$(e.target).closest('.popupWrap').data("kendoDialog").close();
+					}
+				});
+
+				$VIEW.find(".btnSave").kendoButton({
+					themeColor: 'primary',
+					fillMode: 'solid',
+					size: 'large'
+				});
+
+				fnSetData();
+
+			});
+
+		/*]]>*/
+		</script>
+
+	</body>
+
+
+</html>

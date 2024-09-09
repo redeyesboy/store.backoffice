@@ -11,10 +11,37 @@
 
 		<style type="text/css">
 
-			.container { height: 100vh; display: flex; flex-direction: column; }
-			.container_body { flex-grow: 1; display: flex; flex-direction: row; }
-			.lnb { flex-shrink: 0; width: 250px; }
-			.content { flex-grow: 1; }
+			.container {
+				display: grid;
+				grid-template-columns: 240px 1fr;
+				grid-template-rows: minmax(30px, auto) 1fr minmax(30px, auto);
+				height: 100vh;
+				width: 100%;
+			}
+			.header_wrap {
+				grid-column: 1/3;
+				position: relative;
+				width: 100%;
+				background-color: lightgray;
+			}
+			.lnb_wrap {
+				position: relative;
+				height: 100%;
+				overflow: auto;
+				background-color: #f5f5f5;
+			}
+			.content_wrap {
+				position: relative;
+				height: 100%;
+				overflow: auto;
+			}
+			.footer_wrap {
+				grid-column: 1/3;
+				background-color: lightgray;
+			}
+			.content_wrap > [data-view] {
+				padding: 0.5rem;
+			}
 
 		</style>
 
@@ -24,22 +51,153 @@
 
 		<th:block th:replace="~{layouts/fragments/variable :: fragment}"></th:block>
 
-		<div class="container">
-			<header>
+		<div class="container" data-view="defaultLayout">
+			<header class="header_wrap">
 				<th:block th:replace="~{layouts/fragments/header :: fragment}"></th:block>
 			</header>
-			<div class="container_body">
-				<div class="lnb">
-					<th:block th:replace="~{layouts/fragments/lnb :: fragment}"></th:block>
-				</div>
-				<div class="content">
-					<th:block layout:fragment="content"></th:block>
-				</div>
+			<div class="lnb_wrap">
+				<th:block th:replace="~{layouts/fragments/lnb :: fragment}"></th:block>
 			</div>
-			<footer>
+			<div class="content_wrap" >
+				<th:block layout:fragment="content"></th:block>
+			</div>
+			<footer class="footer_wrap">
 				<th:block th:replace="~{layouts/fragments/footer :: fragment}"></th:block>
 			</footer>
 		</div>
+
+		<script th:inline="javascript" type="text/javascript">
+		/*<![CDATA[*/
+
+			$(document).ready(function ( ) {
+
+				const sample_dt1 = [
+					{ text: `<span class="k-button-text" style="min-width: 6rem;">상품</span>`, icon: false, encoded: false, attributes: { 'data-menuId': '0001' } },
+					{ text: `<span class="k-button-text" style="min-width: 6rem;">전시</span>`, icon: false , encoded: false, attributes: { 'data-menuId': '0002' } },
+					{ text: `<span class="k-button-text" style="min-width: 6rem;">회원/마케팅</span>`, icon: false , encoded: false, attributes: { 'data-menuId': '0003' } },
+					{ text: `<span class="k-button-text" style="min-width: 6rem;">주문/배송</span>`, icon: false , encoded: false, attributes: { 'data-menuId': '0004' } },
+					{ text: `<span class="k-button-text" style="min-width: 6rem;">영업망관리</span>`, icon: false , encoded: false, attributes: { 'data-menuId': '0005' } },
+					{ text: `<span class="k-button-text" style="min-width: 6rem;">영업관리</span>`, icon: false , encoded: false, attributes: { 'data-menuId': '0006' } },
+					{ text: `<span class="k-button-text" style="min-width: 6rem;">게시판</span>`, icon: false , encoded: false, attributes: { 'data-menuId': '0007' } },
+					{ text: `<span class="k-button-text" style="min-width: 6rem;">정산</span>`, icon: false , encoded: false, attributes: { 'data-menuId': '0008' } },
+					{ text: `<span class="k-button-text" style="min-width: 6rem;">통계</span>`, icon: false , encoded: false, attributes: { 'data-menuId': '0009' } },
+					{ text: `<span class="k-button-text" style="min-width: 6rem;">운영관리</span>`, icon: false , encoded: false, attributes: { 'data-menuId': '0099' } },
+				];
+
+				const sample_dt2 = [
+					{
+						menuId: '0099001',
+						upperMenuId: '0099',
+						menuNm: '시스템관리',
+						lvl: 2,
+						items: [
+							{ menuNm: '사용자관리', menuId: '009900101', upperMenuId: '0099001', menuUrl: '/system/user/list.view', lvl: 3, menuPath: '운영관리/시스템관리/사용자관리' },
+							{ menuNm: '메뉴관리', menuId: '009900102', upperMenuId: '0099001', menuUrl: '/system/menu/list.view', lvl: 3, menuPath: '운영관리/시스템관리/메뉴관리' },
+							{ menuNm: '공통코드관리', menuId: '009900103', upperMenuId: '0099001', menuUrl: '/system/code/list.view', lvl: 3, menuPath: '운영관리/시스템관리/공통코드관리' },
+						]
+
+					},
+					{
+						menuId: '00990002',
+						menuNm: '시스템관리2',
+					}
+				]
+
+				const $VIEW = $('[data-view="defaultLayout"]');
+
+				$VIEW.on('click', '.btnLogo', function ( ) {
+					location.href = '/';
+				});
+
+				$VIEW.find(".header_btn").kendoButton({
+					size: "large",
+					themeColor: 'none',
+					fillMode: 'flat'
+				});
+
+				$VIEW.find("#btnLnbDisplay").data('kendoButton').bind('click', function ( e ) {
+					if ( $VIEW.find('.lnb_wrap').is(':visible') ) {
+						$VIEW.find('.lnb_wrap').hide();
+						$('.container').css({'grid-template-columns': '1fr'});
+					} else {
+						$('.container').css({'grid-template-columns': '240px 1fr'});
+						$VIEW.find('.lnb_wrap').show();
+					}
+				});
+
+				$VIEW.find("#btnUserInfo").data('kendoButton').bind('click', function ( e ) {
+					alert('사용자 정보 팝업..');
+				});
+
+				$VIEW.find("#btnLogout").data('kendoButton').bind('click', function ( e ) {
+					location.href = '/auth/logout.do';
+				});
+
+				const _headerMenuBtn = $VIEW.find("#headerMenu").kendoButtonGroup({
+					selection: 'single',
+					size: 'large',
+					themeColor: "base",
+					items: sample_dt1,
+					select: ( e ) => {
+						const { target } = e;
+						const menuId = target.attr('data-menuId');
+						if ( $VIEW.find('.lnb_wrap').is(':hidden') ) {
+							$VIEW.find("#btnLnbDisplay").trigger('click');
+						}
+						_lnbTreeView.setDataSource(
+							new kendo.data.HierarchicalDataSource({
+								data: sample_dt2,
+								schema: {
+									model: {
+										id: 'menuId',
+										children: 'items',
+									}
+								}
+							})
+						);
+					}
+				}).data('kendoButtonGroup');
+
+				// TODO PanelBar 변경
+				const _lnbTreeView = $VIEW.find("#treeview").kendoTreeView({
+					template: ( { item } ) => {
+						const { menuId, menuNm, lvl } = item;
+						return `<span class="k-treeview-leaf-text btn_menu" data-menuId=${menuId} data-lvl=${lvl}>${menuNm}</span>`;
+					},
+					dataSource: [],
+					select: function(e) {
+						const { node } = e;
+						if ( $(node).find('.btn_menu').filter('[data-lvl="2"]').isExists() ) {
+							const id = $(node).find('.btn_menu').filter('[data-lvl="2"]').attr('data-menuId');
+							const { uid } = _lnbTreeView.dataSource.get(id);
+							const _node = _lnbTreeView.findByUid(uid);
+							_lnbTreeView.toggle(_node);
+						} else {
+							const id = $(node).find('.btn_menu').attr('data-menuId');
+							const { menuId, upperMenuId, menuNm, menuUrl, menuPath } = _lnbTreeView.dataSource.get(id);
+							const _viewer = $VIEW.find('.content_wrap');
+							_viewer.load(
+								menuUrl,
+								( e ) => {
+									_viewer.find('#contentTitle').html(menuNm);
+									_viewer.find("#breadcrumb").kendoBreadcrumb({
+										value: `Home/${menuPath}`
+									});
+									_viewer.find("#breadcrumb").find('.k-breadcrumb-link').show();
+									console.log(`${menuId} ${upperMenuId} ${menuUrl}`);
+								}
+							)
+
+						}
+					}
+				}).data('kendoTreeView');
+
+				_headerMenuBtn.trigger('click');
+
+			});
+
+		/*]]>*/
+		</script>
 
 		<th:block layout:fragment="script"></th:block>
 

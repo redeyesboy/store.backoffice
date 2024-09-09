@@ -3,10 +3,65 @@
 
 	<th:block th:fragment="fragment">
 
+		<style type="text/css">
+
+			.header {
+				display: flex;
+				align-items: center;
+			}
+			.logo_wrap {
+				flex-shrink: 0;
+				width: 240px;
+				display: flex;
+			}
+			.logo_wrap > button {
+				flex-grow: 1;
+			}
+			.logo {
+				cursor: pointer;
+			}
+			.header_menu_wrap {
+				padding-left: 1rem;
+				flex-grow: 1;
+			}
+			.header_btn_wrap {
+				padding-right: 1rem;
+			}
+
+		</style>
+
 		<!-- /layout/fragments/header.html -->
-		header
+		<div class="header">
+			<div class="logo_wrap">
+				<img class="logo btnLogo" src="/images/common/gnb/logo.png"/>
+				<button type="button" class="header_btn" id="btnLnbDisplay">
+					<span class="fa-solid fa-bars"></span>
+				</button>
+			</div>
+			<div class="header_menu_wrap">
+				<div id="headerMenu"></div>
+			</div>
+			<div class="header_btn_wrap">
+				<span><b>홍길동</b> 님</span>
+				<button type="button" class="header_btn" id="btnUserInfo">
+					<i class="fa-solid fa-user"></i>
+				</button>
+				<button type="button" class="header_btn" id="btnLogout">
+					<i class="fa-solid fa-arrow-right-to-bracket"></i>
+				</button>
+			</div>
+		</div>
+
+		<script th:inline="javascript" type="text/javascript">
+		/*<![CDATA[*/
+
+			$(document).ready(function () {
 
 
+			});
+
+		/*]]>*/
+		</script>
 
 	</th:block>
 

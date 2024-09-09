@@ -17,7 +17,7 @@ class UiUtils {
 			maxWidth: 600,
 			closable: false,
 			modal: true,
-			content: message,
+			content: `<div style="height:100%; display:flex; align-items: center; justify-content: center;"><b>${message}</b></div>`,
 			actions: [
 				{
 					text: '확인',

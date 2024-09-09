@@ -4,10 +4,6 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layouts/defaultLayout}">
 
-	<head>
-		<title>Main</title>
-	</head>
-
 	<body>
 
 		<th:block layout:fragment="content">
@@ -20,7 +16,7 @@
 				</th:block>
 				*/-->
 
-				<a href="/auth/logout.do">logout</a>
+				<div id="treeview2"></div>
 			</div>
 
 		</th:block>
@@ -32,6 +28,50 @@
 				$(document).ready(function ( ) {
 
 					const $VIEW = $('[data-view="mainView"]');
+
+					const dt = [];
+					for ( i=0; i<50; i++ ) {
+						dt.push({
+								text: `foo_${i}`,
+								inStock: 7,
+								items: [
+									{ text: "bar", inStock: 2 },
+									{ text: "baz", inStock: 5 }
+								]
+							})
+					}
+
+					$("#treeview2").kendoTreeView({
+						//  template: "#= item.text # (#= item.inStock #)",
+						template: ( { item } ) => {
+							const { text, inStock } = item;
+							return `<span class="k-treeview-leaf-text aaabbb">${text} ( ${inStock} )</span>`;
+						},
+						dataSource: dt,
+//	 					dataSource: [
+//	 						{
+//	 							text: "foo",
+//	 							inStock: 7,
+//	 							items: [
+//	 								{ text: "bar", inStock: 2 },
+//	 								{ text: "baz", inStock: 5 }
+//	 							]
+//	 						},
+//	 						{
+//	 							text: "foo2",
+//	 							inStock: 7,
+//	 							items: [
+//	 								{ text: "bar1", inStock: 2 },
+//	 								{ text: "baz2", inStock: 5 }
+//	 							]
+//	 						}
+//	 					],
+						select: function(e) {
+							console.log(e)
+						}
+					});
+
+					$("#btnLnbDisplay").trigger('click');
 
 				});
 
