@@ -21,4 +21,14 @@ public class BaseDto implements Serializable {
 
 	private String mode;
 
+	private int skip;
+
+	private int take;
+
+	private int page;
+
+	private int pageSize;
+
+	private int totalCount;
+
 }

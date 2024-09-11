@@ -8,17 +8,21 @@ class AjaxUtils {
 	}
 
 	static getHtml ( type, url, config={} ) {
-		return AjaxUtils.getAjax( type, url, 'html', config);
+		return AjaxUtils.getAjax( type, url, 'html', config );
+	}
+
+	static getJson ( type, url, config={} ) {
+		return AjaxUtils.getAjax( type, url, 'json', config );
 	}
 
 	static getAjax ( type, url, dataType, config={} ) {
 		config.type = type;
 		config.url = url;
 		config.dataType = dataType;
-		return AjaxUtils._getAjax(config);
+		return AjaxUtils._ajax(config);
 	}
 
-	static _getAjax ( config ) {
+	static _ajax ( config ) {
 		config.isBlock = ( typeof config.isBlock == 'boolean' ) ? config.isBlock : true;
 		config.isErrorAlert = ( typeof config.isErrorAlert == 'boolean' ) ? config.isErrorAlert : true;
 		config.async = ( typeof config.async == 'boolean' ) ? config.async : false;
@@ -41,14 +45,23 @@ class AjaxUtils {
 
 				},
 				success: ( data, textStatus, jqXHR ) => {
-					resolve( data );
+					if ( config.dataType == 'html' ) {
+						resolve( data );
+					} else {
+						const { status, message } = data;
+						if ( status == '200' ) {
+							resolve( data );
+						} else {
+							UiUtils.alert({ message: StringUtils.nvl(message, '잠시 후 다시 시도해 주세요.') })
+						}
+					}
 				},
 				complete: ( jqXHR, textStatus ) => {
 
 				},
 				error: ( jqXHR, textStatus, errorThrown  ) => {
 					if ( config.isErrorAlert ) {
-						alert( '잠시 후 다시 시도해 주세요.' );
+						UiUtils.alert({ message: '잠시 후 다시 시도해 주세요.' });
 					}
 					reject( jqXHR );
 				}

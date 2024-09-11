@@ -17,6 +17,8 @@ public class SystemUser extends User {
 
 	public SystemUser(UserDetail userDetail, List<SimpleGrantedAuthority> authorities) {
 		super(userDetail.getName(), userDetail.getPassword(), authorities);
+		this.userDetail = userDetail;
+		this.authorities = authorities;
 	}
 
 	public UserDetail userDetail() {
@@ -25,6 +27,10 @@ public class SystemUser extends User {
 
 	public Integer getId() {
 		return this.userDetail.getId();
+	}
+
+	public String getName() {
+		return this.userDetail.getName();
 	}
 
 	public String getEmail() {

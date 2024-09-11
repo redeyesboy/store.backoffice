@@ -20,43 +20,41 @@
 				<li class="k-expanded">
 					<span class="k-link k-selected">검색</span>
 					<div style="padding: 0 0.5em;">
-<!-- 						<form id="searchForm"> -->
-							<table class="form-table">
-								<colgroup>
-									<col style="width: 10%;"/>
-									<col />
-									<col style="width: 10%;"/>
-									<col/>
-									<col style="width: 10%;"/>
-									<col />
-								</colgroup>
-								<tbody>
-									<tr>
-										<th>검색구분</th>
-										<td>
-											<input class="kendo-ui-select" name="div"/>
-										</td>
-										<th>검색어</th>
-										<td>
-											<input class="kendo-ui-textBox" name="value" value=""/>
-										</td>
-										<th>사용여부</th>
-										<td>
-											<input class="kendo-ui-select" name="useYn"/>
-										</td>
-									</tr>
-								</tbody>
-								<tfoot>
-									<tr>
-										<td colspan="6">
-											<button type="button" class="kendo-ui-button" id="btnSearch">
-												<span style="width: 5rem; padding: 0.25rem;">검색</span>
-											</button>
-										</td>
-									</tr>
-								</tfoot>
-							</table>
-<!-- 						</form> -->
+						<table class="form-table">
+							<colgroup>
+								<col style="width: 10%;"/>
+								<col />
+								<col style="width: 10%;"/>
+								<col/>
+								<col style="width: 10%;"/>
+								<col />
+							</colgroup>
+							<tbody>
+								<tr>
+									<th>검색구분</th>
+									<td>
+										<input class="kendo-ui-select" name="div"/>
+									</td>
+									<th>검색어</th>
+									<td>
+										<input class="kendo-ui-textBox" name="value" value=""/>
+									</td>
+									<th>사용여부</th>
+									<td>
+										<input class="kendo-ui-select" name="useYn"/>
+									</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="6">
+										<button type="button" class="kendo-ui-button" id="btnSearch">
+											<span style="width: 5rem; padding: 0.25rem;">검색</span>
+										</button>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
 					</div>
 				</li>
 			</ul>
@@ -71,14 +69,6 @@
 		/*<![CDATA[*/
 
 			$(document).ready(function () {
-
-				const sample_dt1 = [
-					{ grpCodeId: "CODE_0001", grpCodeNm: '그룹코드명01', useYn: 'Y', grpCodeDesc: '설명설명설명' },
-					{ grpCodeId: "CODE_0002", grpCodeNm: '그룹코드명02', useYn: 'Y', grpCodeDesc: '' },
-					{ grpCodeId: "CODE_0003", grpCodeNm: '그룹코드명03', useYn: 'Y', grpCodeDesc: '' },
-					{ grpCodeId: "CODE_0004", grpCodeNm: '그룹코드명04', useYn: 'Y', grpCodeDesc: '' },
-					{ grpCodeId: "CODE_0005", grpCodeNm: '그룹코드명05', useYn: 'Y', grpCodeDesc: '' }
-				];
 
 				const $VIEW = $('[data-view="commonCodeListView"]');
 
@@ -98,12 +88,54 @@
 								title: '공통코드',
 								content: html,
 								hide: ( e ) => {
+									const closeType = StringUtils.nvl($(`#${_id}`).attr('data-closeType'), '');
+									if ( [ 'save', 'delete' ].includes(closeType) ) {
+										_dataSource.read();
+									}
 									$(`#${_id}`).data("kendoDialog").destroy();
 								}
 							});
 						}
 					);
 				}
+
+				const _dataSource = new kendo.data.DataSource({
+					transport: {
+						read: {
+							url: '/system/code/list.do',
+							type: 'POST',
+							contentType: 'application/json',
+							dataType: 'json',
+							cache: false,
+							data: () => {
+								const div = $VIEW.find('[name="div"]').data("kendoDropDownList").value();
+								const value = $VIEW.find('[name="value"]').data("kendoTextBox").value();
+								const useYn = $VIEW.find('[name="useYn"]').data("kendoDropDownList").value();
+								return {
+									div: div,
+									value: value,
+									useYn: useYn
+								}
+							}
+						},
+						parameterMap: ( data, type ) => {
+							return kendo.stringify(data);
+						}
+					},
+					page: 1,
+					pageSize: 20,
+					serverPaging: true,
+					schema: {
+						data: ( { data } ) => {
+							const { list } = data;
+							return list;
+						},
+						total: ( { data } ) => {
+							const { reqDto } = data;
+							return reqDto.totalCount;
+						}
+					}
+				});
 
 				$VIEW.find('.kendo-ui-expansionPanel').each(function ( ) {
 					const _title = $(this).attr('data-title');
@@ -155,22 +187,27 @@
 					themeColor: 'primary',
 					fillMode: 'solid',
 					click: ( e ) => {
-						const _grid = $VIEW.find(".grid").data('kendoGrid');
-						_grid.setDataSource(new kendo.data.DataSource({
-							data: sample_dt1,
-						}));
+						_dataSource.read();
 					}
 				});
 
 				$VIEW.find(".grid").kendoGrid({
+					autoBind: false,
 					sortable: true,
 					resizable: true,
-					pageable: false,
+					pageable: {
+						alwaysVisible: true,
+						info: false,
+						messages: {
+							itemsPerPage: "개씩 보기"
+						},
+						pageSizes: [20, 50, 100]
+					},
 					noRecords: {
 						template: ( ) => {
 							return `
 								<div class="grid_no_data">
-									<b>데이터가 없습니다.</b>
+									<b>No Data.</b>
 								</div>
 							`;
 						}
@@ -185,8 +222,8 @@
 							title: '그룹코드',
 							headerAttributes: { style: "text-align: center; justify-content: center" },
 							width: '10em',
-							template: ( { grpCodeId } ) => {
-								return `<a href='javascript:void(0);' class='grid_column_btn btnDetail' data-grpCodeId='${grpCodeId}'>${grpCodeId}</a>`;
+							template: ( { codeIdx, grpCodeId } ) => {
+								return `<a href='javascript:void(0);' class='grid_column_btn btnDetail' data-codeIdx='${codeIdx}'>${grpCodeId}</a>`;
 							}
 						},
 						{
@@ -210,9 +247,12 @@
 							field: 'grpCodeDesc',
 							title: '설명',
 							headerAttributes: { style: "text-align: center; justify-content: center" },
+							template: ( { grpCodeDesc } ) => {
+								return grpCodeDesc.replaceAll('\n', '<br/>');
+							}
 						},
 					],
-					dataSource: [],
+					dataSource: _dataSource,
 					selectable: 'multiple',
 					toolbar: [
 						{
@@ -234,20 +274,51 @@
 									Ui.alert('삭제할 대상을 선택해주세요.');
 									return;
 								}
-								console.log('dddddddddddd')
+								const _requestDatas = [];
+								for ( const { uid } of _selectedDatas ) {
+									const _rowData = _dataSource.getByUid(uid);
+									_rowData.mode = 'D';
+									_requestDatas.push(_rowData);
+								}
+								UiUtils.confirm({
+									message: '삭제하시겠습니까?',
+									fnAgree: ( e ) => {
+										const _ajax = AjaxUtils.getJson(
+											'POST',
+											'/system/code/delete.do',
+											{
+												contentType: 'application/json',
+												data: JSON.stringify(_requestDatas)
+											}
+										);
+										_ajax.then(
+											( result ) => {
+												UiUtils.alert({
+													message: '삭제 처리되었습니다.',
+													fnClose: ( ) => {
+														_dataSource.read();
+													}
+												});
+											}
+										);
+									}
+								});
 							}
 						}
 					]
 				});
-				$VIEW.find(".grid").css({ 'height': '' });
 
 				$VIEW.on('click', '.btnDetail', function ( ) {
-					const grpCodeId = $(this).attr('data-grpCodeId');
+					const codeIdx = $(this).attr('data-codeIdx');
 					fnDetailView({
-						grpCodeId: grpCodeId,
+						codeIdx: codeIdx,
 						mode: 'U'
 					});
 				});
+
+				$VIEW.find('.grid').css({ 'height': '' });
+
+				_dataSource.read();
 
 			});
 

@@ -8,4 +8,10 @@ public class Constants {
 
 	public static final String MAIN_VIEW_PATH = "/main.view";
 
+	public static final String MODE_CREATE = "C";
+
+	public static final String MODE_UPDATE = "U";
+
+	public static final String MODE_DELETE = "D";
+
 }

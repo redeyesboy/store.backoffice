@@ -6,12 +6,15 @@
 
 		<style type="text/css">
 
+			input:read-only { background: #eee }
+
 		</style>
 
 		<!-- /view/system/commonCodeListView.html	 -->
 		<div class="pop_detail_content" data-view="commonCodeDetailView" style="width: 80vw;">
 
 			<input type="hidden" name="mode" th:value="${reqDto.mode}"/>
+			<input type="hidden" name="codeIdx" th:value="${reqDto.codeIdx}"/>
 
 			<table class="form-table">
 				<colgroup>
@@ -52,11 +55,11 @@
 
 			<div style="text-align: end;">
 				<th:block th:if="${#strings.equals('U', reqDto.mode)}">
-					<button type="button" th:id="|BTN_${#strings.randomAlphanumeric(10)}|" class="btnDelete">
+					<button type="button" class="btnDelete">
 						<span style="width: 6em; font-weight: 600;">삭제</span>
 					</button>
 				</th:block>
-				<button type="button" th:id="|BTN_${#strings.randomAlphanumeric(10)}|" class="btnSave">
+				<button type="button" class="btnSave">
 					<span style="width: 6em; font-weight: 600;">저장</span>
 				</button>
 			</div>
@@ -68,49 +71,74 @@
 
 			$(document).ready(function () {
 
-				const sample_dt1 = {
-					grpCodeId: 'CODE_0001',
-					grpCodeNm: '그룹코드명01',
-					useYn: 'Y',
-					grpCodeDesc: '설명설명설명',
-					codeList: [
-						{ grpCodeId: 'CODE_0001', codeId: '01', codeNm: 'codeNm01', useYn: 'Y', dispOrd: 1, refVal01: 'f01', refVal02: '', refVal03: '', refVal04: '', refVal05: '', mode: 'U' },
-						{ grpCodeId: 'CODE_0001', codeId: '02', codeNm: 'codeNm02', useYn: 'Y', dispOrd: 2, refVal01: 'f01', refVal02: 'f02', refVal03: '', refVal04: '', refVal05: '', mode: 'U' },
-						{ grpCodeId: 'CODE_0001', codeId: '03', codeNm: 'codeNm03', useYn: 'Y', dispOrd: 3, refVal01: 'f01', refVal02: '', refVal03: 'f03', refVal04: '', refVal05: '', mode: 'U' },
-						{ grpCodeId: 'CODE_0001', codeId: '04', codeNm: 'codeNm04', useYn: 'Y', dispOrd: 4, refVal01: 'f01', refVal02: '', refVal03: '', refVal04: 'f04', refVal05: '', mode: 'U' },
-						{ grpCodeId: 'CODE_0001', codeId: '05', codeNm: 'codeNm05', useYn: 'Y', dispOrd: 5, refVal01: 'f01', refVal02: '', refVal03: '', refVal04: '', refVal05: 'f05', mode: 'U' }
-					]
-				}
-
 				const $VIEW = $('[data-view="commonCodeDetailView"]');
 
-				const fnSetDataSource = function ( data=[] ) {
-					return new kendo.data.DataSource({
-						data: data,
-						schema: {
-							model: {
-								id: 'codeId',
-								fields: {
-									dispOrd: { type: 'number' }
+				const MODE = $VIEW.find('[name="mode"]').val();
+				const CODE_IDX = $VIEW.find('[name="codeIdx"]').val();
+
+				const _requestData = {
+					mode: MODE,
+					codeIdx: CODE_IDX,
+					list: []
+				};
+
+				const _dataSource = new kendo.data.DataSource({
+					transport: {
+						read: {
+							url: '/system/code/txn/list.do',
+							type: 'POST',
+							contentType: 'application/json',
+							dataType: 'json',
+							cache: false,
+							data: ( ) => {
+								return {
+									codeIdx: CODE_IDX
 								}
-							},
-							total: () => { return 99 }
+							}
+						},
+						parameterMap: ( data, type ) => {
+							return kendo.stringify(data);
 						}
-					});
-				}
+					},
+					schema: {
+						data: ( { data } ) => {
+							const { list } = data;
+							return list;
+						},
+						model: {
+							id: 'codeTxnIdx',
+							fields: {
+								dispOrd: { type: 'number' },
+								useYn: { type: 'string' }
+							}
+						}
+					}
+				});
 
 				const fnSetData = function ( ) {
-
 					if ( $VIEW.find('[name="mode"]').val() == 'C' ) {
+						_dataSource.read();
 						return false;
 					}
-
-					const { grpCodeId, grpCodeNm, useYn, grpCodeDesc, codeList } = sample_dt1;
-					$VIEW.find('[name="grpCodeId"]').data('kendoTextBox').value(grpCodeId);
-					$VIEW.find('[name="grpCodeNm"]').data('kendoTextBox').value(grpCodeNm);
-					$VIEW.find('#useYn').getKendoRadioGroup().value(grpCodeId);
-					$VIEW.find('[name="grpCodeDesc"]').data('kendoTextArea').value(grpCodeDesc);
-					$VIEW.find(".grid").data('kendoGrid').setDataSource(fnSetDataSource(codeList));
+					const _ajax = AjaxUtils.getJson(
+						'POST',
+						'/system/code.do',
+						{
+							contentType: 'application/json',
+							data: JSON.stringify({ codeIdx: CODE_IDX })
+						}
+					);
+					_ajax.then(
+						( { data } ) => {
+							const { resDto } = data;
+							const { grpCodeId, grpCodeNm, useYn, grpCodeDesc } = resDto;
+		 					$VIEW.find('[name="grpCodeId"]').data('kendoTextBox').value(grpCodeId);
+		 					$VIEW.find('[name="grpCodeNm"]').data('kendoTextBox').value(grpCodeNm);
+		 					$VIEW.find('#useYn').getKendoRadioGroup().value(grpCodeId);
+		 					$VIEW.find('[name="grpCodeDesc"]').data('kendoTextArea').value(grpCodeDesc);
+							_dataSource.read();
+						}
+					);
 				}
 
 				$VIEW.find('.kendo-ui-textBox').kendoTextBox({
@@ -133,6 +161,7 @@
 				});
 
 				$VIEW.find(".grid").kendoGrid({
+					autoBind: false,
 					sortable: false,
 					resizable: true,
 					pageable: false,
@@ -141,13 +170,18 @@
 						template: ( ) => {
 							return `
 								<div class="grid_no_data">
-									<b>데이터가 없습니다.</b>
+									<b>No Data.</b>
 								</div>
 							`;
 						}
 					},
 					columns: [
-						{ selectable: true, width: '45px', headerAttributes: { style: "text-align: center; justify-content: center" }, attributes: { style: 'text-align: center;' }, },
+						{
+							selectable: true,
+							width: '45px',
+							headerAttributes: { style: "text-align: center; justify-content: center" },
+							attributes: { style: 'text-align: center;' },
+						},
 						{
 							field: 'codeId',
 							title: '코드',
@@ -155,7 +189,13 @@
 							width: '20em',
 							editable: ( data ) => {
 								return data.isNew();
-							}
+							},
+							attributes: ( data ) => {
+								if ( !data.isNew() ) {
+									return { style: "color: red;" };
+								}
+								return {};
+							},
 						},
 						{
 							field: 'codeNm',
@@ -169,10 +209,17 @@
 							headerAttributes: { style: "text-align: center; justify-content: center" },
 							width: '6em',
 							attributes: { style: 'text-align: center;' },
-							values: [
-								{ text: 'Y', value: 'Y' },
-								{ text: 'N', value: 'N' },
-							]
+							editor: 'DropDownList',
+							editorOptions: {
+								dataTextField: 'text',
+								dataValueField: 'value',
+								dataSource: {
+									data: [
+										{ text:'Y', value: 'Y' },
+										{ text:'N', value: 'N' }
+									]
+								}
+							}
 						},
 						{
 							field: 'dispOrd',
@@ -211,11 +258,14 @@
 							width: '8em',
 							headerAttributes: { style: "text-align: center; justify-content: center" },
 						},
+						{ field: 'codeTxnIdx', hidden: true },
+						{ field: 'codeIdx', hidden: true }
 					],
 					editable: {
-						mode: 'incell'
+						mode: 'incell',
+						confirmation: false
 					},
-					dataSource:fnSetDataSource(),
+					dataSource: _dataSource,
 					selectable: 'multiple',
 					toolbar: [
 						{
@@ -224,7 +274,9 @@
 							icon: 'plus',
 							click: ( e ) => {
 								const _grid = $VIEW.find(".grid").data('kendoGrid');
-								_grid.addRow();
+								const _dataSource = _grid.dataSource;
+								_dataSource.add({ codeIdx: CODE_IDX, useYn: 'Y', dispOrd: 0 });
+								_grid.editCell(_grid.tbody.find(`tr:last td:eq(1)`));
 							}
 						},
 						{
@@ -233,12 +285,20 @@
 							icon: 'minus',
 							click: ( e ) => {
 								const _grid = $VIEW.find(".grid").data('kendoGrid');
+								const _dataSource = _grid.dataSource;
 								const _selectedDatas = _grid.getSelectedData();
 								if ( ObjectUtils.isEmpty(_selectedDatas ) ) {
 									Ui.alert('삭제할 대상을 선택해주세요.');
 									return;
 								}
-								console.log('dddddddddddd');
+								for ( const { uid } of _selectedDatas ) {
+									const _rowData = _dataSource.getByUid(uid);
+									if ( !_rowData.isNew() ) {
+										_rowData.mode = 'D';
+										_requestData.list.push(_rowData);
+									}
+									_dataSource.remove(_rowData);
+								}
 							}
 						},
 					],
@@ -246,10 +306,7 @@
 						const _dataSource = _grid.dataSource;
 						const _data = _dataSource.data();
 						_data.sort((a, b) => a.dispOrd - b.dispOrd );
-						_grid.setDataSource(fnSetDataSource(_data));
-					},
-					remove: ( { model, sender:_grid } ) => {
-
+						_dataSource.data(_data);
 					}
 				});
 
@@ -258,15 +315,105 @@
 					fillMode: 'solid',
 					size: 'large',
 					click: ( e ) => {
-						console.log(e);
-						$(e.target).closest('.popupWrap').data("kendoDialog").close();
+						const _el = $(e.target).closest('.popupWrap');
+						_el.attr('data-closeType', 'delete');
+						_el.data("kendoDialog").close();
 					}
 				});
 
 				$VIEW.find(".btnSave").kendoButton({
 					themeColor: 'primary',
 					fillMode: 'solid',
-					size: 'large'
+					size: 'large',
+					click: ( e ) => {
+						const grpCodeId = $VIEW.find('[name="grpCodeId"]').data("kendoTextBox").value();
+						if ( ObjectUtils.isEmpty(grpCodeId) ) {
+							UiUtils.alert({
+								message: '그룹 코드를 입력해 주세요.',
+								fnClose: ( ) => {
+									$VIEW.find('[name="grpCodeId"]').data("kendoTextBox").focus();
+								}
+							});
+							return false;
+						}
+						const grpCodeNm = $VIEW.find('[name="grpCodeNm"]').data("kendoTextBox").value();
+						if ( ObjectUtils.isEmpty(grpCodeNm) ) {
+							UiUtils.alert({
+								message: '그룹 코드명을 입력해 주세요.',
+								fnClose: ( ) => {
+									$VIEW.find('[name="grpCodeNm"]').data("kendoTextBox").focus();
+								}
+							});
+							return false;
+						}
+						_requestData.codeId = grpCodeId;
+						_requestData.codeNm = grpCodeNm;
+						_requestData.useYn = $VIEW.find("#useYn").getKendoRadioGroup().value();
+						_requestData.codeDesc = $VIEW.find('[name="grpCodeDesc"]').data('kendoTextArea').value();
+						const _grid = $VIEW.find(".grid").data('kendoGrid');
+						const _dataSource = _grid.dataSource;
+						const codeIds = [];
+						for ( const rowData of _dataSource.data() ) { }
+						let isBreak = false;
+						$.each(_dataSource.data(), function ( idx, rowData ) {
+							const { codeId, codeNm } = rowData;
+							if ( StringUtils.isEmpty(codeId) ) {
+								UiUtils.alert({
+									message: `코드값을 입력해 주세요.`,
+									fnClose: ( ) => {
+										_grid.editCell(_grid.tbody.find(`tr:eq(${idx}) td:eq(1)`));
+									}
+								});
+								isBreak = true;
+								return false;
+							}
+							if ( codeIds.includes(codeId) ) {
+								UiUtils.alert({ message: `동일한 코드가 존재합니다.( 코드: ${codeId} )` });
+								isBreak = true;
+								return false;
+							}
+							if ( StringUtils.isEmpty(codeNm) ) {
+								UiUtils.alert({
+									message: `코드명을 입력해 주세요.`,
+									fnClose: ( ) => {
+										_grid.editCell(_grid.tbody.find(`tr:eq(${idx}) td:eq(2)`));
+									}
+								});
+								isBreak = true;
+								return false;
+							}
+							if ( rowData.isNew() ) {
+								rowData.mode = 'C';
+							} else {
+								rowData.mode = 'U';
+							}
+							_requestData.list.push(rowData);
+							codeIds.push(codeId)
+						});
+						if ( isBreak ) {
+							return false;
+						}
+						UiUtils.confirm({
+							message: '저장하시겠습니까?',
+							fnAgree: ( e ) => {
+								const _ajax = AjaxUtils.getJson(
+									'POST',
+									'/system/code/save.do',
+									{
+										contentType: 'application/json',
+										data: JSON.stringify(_requestData)
+									}
+								);
+								_ajax.then(
+									( { data } ) => {
+										const _el = $VIEW.closest('.popupWrap');
+										_el.attr('data-closeType', 'save');
+										_el.data("kendoDialog").close();
+									}
+								);
+							}
+						});
+					}
 				});
 
 				fnSetData();
@@ -277,6 +424,5 @@
 		</script>
 
 	</body>
-
 
 </html>

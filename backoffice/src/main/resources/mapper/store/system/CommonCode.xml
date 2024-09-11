@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.kr.store.bo.system.dao.CommonCodeDao">
+
+	<sql id="selectGroupCommonCodeListSql">
+
+		SELECT T1.CODE_IDX
+		, T1.CODE_ID
+		, T1.CODE_NM
+		, T1.USE_YN
+		, T1.CODE_DESC
+		FROM T_CODE_BAS T1
+		WHERE T1.DEL_YN = 'N'
+		<if test="@co.kr.store.bo.common.utils.StringUtils@isNotEmpty(value)">
+			<choose>
+				<when test="@co.kr.store.bo.common.utils.StringUtils@equals('code', div)">
+					AND T1.CODE_ID LIKE CONCAT('%', #{value}, '%')
+				</when>
+				<when test="@co.kr.store.bo.common.utils.StringUtils@equals('name', div)">
+					AND T1.CODE_NM LIKE CONCAT('%', #{value}, '%')
+				</when>
+			</choose>
+		</if>
+		<if test="@co.kr.store.bo.common.utils.StringUtils@isNotEmpty(useYn)">
+			AND T1.USE_YN = #{useYn}
+		</if>
+		<if test="@co.kr.store.bo.common.utils.ObjectUtils@isNotEmpty(codeIdx)">
+			AND T1.CODE_IDX = #{codeIdx}
+		</if>
+		<if test="@co.kr.store.bo.common.utils.StringUtils@isNotEmpty(codeId)">
+			AND T1.CODE_ID = #{codeId}
+		</if>
+
+	</sql>
+
+	<select id="selectGroupCommonCode"
+		parameterType="co.kr.store.bo.system.dto.CommonCodeDto"
+		resultType="co.kr.store.bo.system.dto.CommonCodeDto">
+
+		/* CommonCode.selectGroupCommonCodeList */
+		SELECT R1.CODE_IDX
+		, R1.CODE_ID AS GRP_CODE_ID
+		, R1.CODE_NM AS GRP_CODE_NM
+		, R1.USE_YN
+		, R1.CODE_DESC AS GRP_CODE_DESC
+		FROM (
+			<include refid="selectGroupCommonCodeListSql"></include>
+		) R1
+
+	</select>
+
+	<select id="selectGroupCommonCodeListCount"
+		parameterType="co.kr.store.bo.system.dto.CommonCodeDto"
+		resultType="java.lang.Integer">
+
+		/* CommonCode.selectGroupCommonCodeList */
+		SELECT COUNT(R1.CODE_IDX) AS CNT
+		FROM (
+			<include refid="selectGroupCommonCodeListSql"></include>
+		) R1
+
+	</select>
+
+	<select id="selectGroupCommonCodeList"
+		parameterType="co.kr.store.bo.system.dto.CommonCodeDto"
+		resultType="co.kr.store.bo.system.dto.CommonCodeDto">
+
+		/* CommonCode.selectGroupCommonCodeList */
+		SELECT R1.CODE_IDX
+		, R1.CODE_ID AS GRP_CODE_ID
+		, R1.CODE_NM AS GRP_CODE_NM
+		, R1.USE_YN
+		, R1.CODE_DESC AS GRP_CODE_DESC
+		FROM (
+			<include refid="selectGroupCommonCodeListSql"></include>
+		) R1
+		ORDER BY R1.CODE_IDX DESC
+		LIMIT #{take} OFFSET #{skip}
+
+	</select>
+
+	<select id="selectCommonCodeList"
+		parameterType="co.kr.store.bo.system.dto.CommonCodeDto"
+		resultType="co.kr.store.bo.system.dto.CommonCodeDto">
+
+		/* CommonCode.selectCommonCodeList */
+		SELECT T1.CODE_TXN_IDX
+		, T1.CODE_IDX
+		, T1.CODE_ID
+		, T1.CODE_NM
+		, T1.USE_YN
+		, T1.DISP_ORD
+		, T1.REF_VAL_01
+		, T1.REF_VAL_02
+		, T1.REF_VAL_03
+		, T1.REF_VAL_04
+		, T1.REF_VAL_05
+		, T1.REG_ID
+		, T1.REG_DT
+		, T1.UDT_ID
+		, T1.UDT_DT
+		FROM T_CODE_TXN T1
+		WHERE T1.DEL_YN = 'N'
+		AND T1.CODE_IDX = #{codeIdx}
+		ORDER BY T1.DISP_ORD ASC
+
+	</select>
+
+	<insert id="insertCodeBas"
+		parameterType="co.kr.store.bo.core.dto.domain.CodeBas"
+		useGeneratedKeys="true" keyProperty="codeIdx" keyColumn="code_idx">
+
+		/* CommonCode.insertCodeBas */
+		INSERT INTO T_CODE_BAS (
+			  CODE_ID
+			, CODE_NM
+			, CODE_DESC
+			, USE_YN
+			, DEL_YN
+			, REG_ID
+			, REG_DT
+			, UDT_ID
+			, UDT_DT
+		) VALUES (
+			  #{codeId}
+			, #{codeNm}
+			, #{codeDesc}
+			, #{useYn}
+			, #{delYn}
+			, #{regId}
+			, NOW()
+			, #{udtId}
+			, NOW()
+		)
+
+	</insert>
+
+	<update id="updateCodeBas"
+		parameterType="co.kr.store.bo.core.dto.domain.CodeBas">
+
+		/* CommonCode.updateCodeBas */
+		UPDATE T_CODE_BAS SET
+		  CODE_NM = #{codeNm}
+		, CODE_DESC = #{codeDesc}
+		, USE_YN = #{useYn}
+		, UDT_ID = #{udtId}
+		, UDT_DT = NOW()
+		WHERE CODE_IDX = #{codeIdx}
+
+	</update>
+
+	<update id="deleteCodeBas" parameterType="co.kr.store.bo.core.dto.domain.CodeBas">
+
+		/* CommonCode.deleteCodeBas */
+		UPDATE T_CODE_BAS SET
+		  DEL_YN = 'Y'
+		, UDT_ID = #{udtId}
+		, UDT_DT = NOW()
+		WHERE CODE_IDX = #{codeIdx}
+
+	</update>
+
+	<insert id="insertCodeTxn"
+		parameterType="co.kr.store.bo.core.dto.domain.CodeTxn"
+		useGeneratedKeys="true" keyProperty="codeTxnIdx" keyColumn="code_txn_idx">
+
+		/* CommonCode.insertCodeTxn */
+		INSERT INTO T_CODE_TXN (
+			  CODE_IDX
+			, CODE_ID
+			, CODE_NM
+			, USE_YN
+			, DISP_ORD
+			, REF_VAL_01
+			, REF_VAL_02
+			, REF_VAL_03
+			, REF_VAL_04
+			, REF_VAL_05
+			, DEL_YN
+			, REG_ID
+			, REG_DT
+			, UDT_ID
+			, UDT_DT
+		) VALUES (
+			  #{codeIdx}
+			, #{codeId}
+			, #{codeNm}
+			, #{useYn}
+			, #{dispOrd}
+			, #{refVal01}
+			, #{refVal02}
+			, #{refVal03}
+			, #{refVal04}
+			, #{refVal05}
+			, #{delYn}
+			, #{regId}
+			, NOW()
+			, #{udtId}
+			, NOW()
+		)
+
+	</insert>
+
+	<update id="updateCodeTxn"
+		parameterType="co.kr.store.bo.core.dto.domain.CodeTxn">
+
+		/* CommonCode.updateCodeTxn */
+		UPDATE T_CODE_TXN SET
+		  CODE_ID = #{codeId}
+		, CODE_NM = #{codeNm}
+		, USE_YN = #{useYn}
+		, DISP_ORD = #{dispOrd}
+		, REF_VAL_01 = #{refVal01}
+		, REF_VAL_02 = #{refVal02}
+		, REF_VAL_03 = #{refVal03}
+		, REF_VAL_04 = #{refVal04}
+		, REF_VAL_05 = #{refVal05}
+		, UDT_ID = #{udtId}
+		, UDT_DT = NOW()
+		WHERE CODE_TXN_IDX = #{codeTxnIdx}
+		AND CODE_IDX = #{codeIdx}
+
+	</update>
+
+	<update id="deleteCodeTxn" parameterType="co.kr.store.bo.core.dto.domain.CodeTxn">
+
+		/* CommonCode.deleteCodeTxn */
+		UPDATE T_CODE_TXN SET
+		  DEL_YN = 'Y'
+		, UDT_ID = #{udtId}
+		, UDT_DT = NOW()
+		WHERE CODE_IDX = #{codeIdx}
+		<if test="@co.kr.store.bo.common.utils.ObjectUtils@isNotEmpty(codeTxnIdx)">
+			AND CODE_TXN_IDX = #{codeTxnIdx}
+		</if>
+
+	</update>
+
+</mapper>

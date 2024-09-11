@@ -9,4 +9,9 @@
 
 .grid_column_btn {
 	font-weight: 600;
+	color: blue;
+}
+
+.k-pager{
+	justify-content: space-between;
 }

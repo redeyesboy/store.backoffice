@@ -28,7 +28,7 @@ public class SystemAuthenticationProvider implements AuthenticationProvider {
 		UserDetail userDetail = UserDetail.builder()
 			.id(1111)
 			.email("test@adm.com")
-			.name("test kim")
+			.name("테스터")
 			.build();
 		token.setDetails(new SystemUser(userDetail, authorities));
 		return token;

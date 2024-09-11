@@ -42,7 +42,9 @@
 				<div id="headerMenu"></div>
 			</div>
 			<div class="header_btn_wrap">
-				<span><b>홍길동</b> 님</span>
+				<span>
+					<b th:text="${@authUtils.getName()}"></b> 님
+				</span>
 				<button type="button" class="header_btn" id="btnUserInfo">
 					<i class="fa-solid fa-user"></i>
 				</button>
