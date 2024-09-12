@@ -13,7 +13,7 @@ public class MainController {
 
 	private final MainService mainService;
 
-	@GetMapping({ "/", "/main.view" })
+	@GetMapping({ "/" })
 	public ModelAndView mainView() {
 		return new ModelAndView("/view/main/mainView");
 	}

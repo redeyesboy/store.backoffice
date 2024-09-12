@@ -1,11 +1,16 @@
 package co.kr.store.bo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import co.kr.store.bo.common.utils.RedisUtils;
+import co.kr.store.bo.system.dto.CommonCodeDto;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -16,7 +21,7 @@ class ApplicationTests {
 	@Qualifier("jasyptEncryptor")
 	private PooledPBEStringEncryptor encryptor;
 
-	@Test
+//	@Test
 	void jasyptEncryption() {
 
 		String value = "test_value";
@@ -26,6 +31,32 @@ class ApplicationTests {
 		log.info("Value:: {}", value);
 		log.info("EncValue:: {}", encValue);
 		log.info("DecValue:: {}", decValue);
+
+	}
+
+	@Test
+	void redisTemplateTest() {
+
+		String key = "re_key";
+		CommonCodeDto value1 = new CommonCodeDto();
+		value1.setCodeNm("TEST");
+		List<CommonCodeDto> value = new ArrayList<CommonCodeDto>();
+		value.add(value1);
+
+		RedisUtils.set(key, value);
+		log.info("bf Value:: {}", RedisUtils.get(key));
+
+//		RedisUtils.delete(key);
+//		log.info("af Value:: {}", RedisUtils.get(key));
+
+		RedisUtils.delete("001");
+
+		log.info("af Value:: {}", RedisUtils.get("001", "01"));
+
+		RedisUtils.set("001", "01", value);
+
+
+		log.info("bf Value:: {}", RedisUtils.get("001", "01"));
 
 	}
 
