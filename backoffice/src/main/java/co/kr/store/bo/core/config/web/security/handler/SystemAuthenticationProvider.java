@@ -22,7 +22,7 @@ public class SystemAuthenticationProvider implements AuthenticationProvider {
 
 		// TODO grant=role set
 		List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
-		authorities.add(new SimpleGrantedAuthority("USER"));
+		authorities.add(new SimpleGrantedAuthority("ADMIN"));
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(authentication.getName(), authentication.getCredentials(), authorities);
 		//TODO chg
 		UserDetail userDetail = UserDetail.builder()

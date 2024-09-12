@@ -6,7 +6,7 @@ public class Constants {
 
 	public static final String LOGIN_VIEW_PATH = "/auth/login.view";
 
-	public static final String MAIN_VIEW_PATH = "/main.view";
+	public static final String MAIN_VIEW_PATH = "/";
 
 	public static final String MODE_CREATE = "C";
 

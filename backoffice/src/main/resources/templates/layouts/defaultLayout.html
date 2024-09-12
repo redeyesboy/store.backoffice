@@ -96,10 +96,6 @@
 							{ menuNm: '공통코드관리', menuId: '009900103', upperMenuId: '0099001', menuUrl: '/system/code/list.view', lvl: 3, menuPath: '운영관리/시스템관리/공통코드관리' },
 						]
 
-					},
-					{
-						menuId: '00990002',
-						menuNm: '시스템관리2',
 					}
 				]
 
@@ -180,10 +176,12 @@
 								( e ) => {
 									_viewer.find('#contentTitle').html(menuNm);
 									_viewer.find("#breadcrumb").kendoBreadcrumb({
-										value: `Home/${menuPath}`
+										value: `Home/${menuPath}`,
+										click: ( e ) => {
+											e.preventDefault();
+										}
 									});
 									_viewer.find("#breadcrumb").find('.k-breadcrumb-link').show();
-									console.log(`${menuId} ${upperMenuId} ${menuUrl}`);
 								}
 							)
 
