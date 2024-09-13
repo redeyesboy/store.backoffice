@@ -73,6 +73,7 @@
 				const $VIEW = $('[data-view="commonCodeListView"]');
 
 				const fnDetailView = function ( requestData ) {
+					requestData.menuId = '009900104';
 					const _ajax = AjaxUtils.getHtml(
 						'POST',
 						'/system/code/detail.view',
