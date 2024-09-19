@@ -7,11 +7,20 @@ class UiUtils {
 
 	}
 
-	static alert ( { message, fnClose } ) {
+	static alert ( param ) {
+		if ( typeof param == 'string' ) {
+			UiUtils._alert({ message: param });
+		} else if ( typeof param == 'object' ) {
+			UiUtils._alert(param);
+		}
+	}
+
+	static _alert ( { message, fnClose } ) {
 		const _id = kendo.guid();
 		$('body').append(`<div id="${_id}"></div>`);
 		$(`#${_id}`).kendoDialog({
 			title: 'My Store',
+			themeColor: 'primary',
 			minHeight: 180,
 			minWidth: 300,
 			maxWidth: 600,
@@ -40,6 +49,7 @@ class UiUtils {
 		$('body').append(`<div id="${_id}"></div>`);
 		$(`#${_id}`).kendoDialog({
 			title: 'My Store',
+			themeColor: 'primary',
 			minHeight: 180,
 			minWidth: 300,
 			maxWidth: 600,

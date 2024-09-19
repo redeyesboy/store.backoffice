@@ -92,8 +92,11 @@
 						lvl: 2,
 						items: [
 							{ menuNm: '사용자관리', menuId: '009900101', upperMenuId: '0099001', menuUrl: '/system/user/list.view', lvl: 3, menuPath: '운영관리/시스템관리/사용자관리' },
-							{ menuNm: '메뉴관리', menuId: '009900102', upperMenuId: '0099001', menuUrl: '/system/menu/list.view', lvl: 3, menuPath: '운영관리/시스템관리/메뉴관리' },
-							{ menuNm: '공통코드관리', menuId: '009900103', upperMenuId: '0099001', menuUrl: '/system/code/list.view', lvl: 3, menuPath: '운영관리/시스템관리/공통코드관리' },
+							{ menuNm: '공통코드관리', menuId: '009900102', upperMenuId: '0099001', menuUrl: '/system/code/list.view', lvl: 3, menuPath: '운영관리/시스템관리/공통코드관리' },
+							{ menuNm: '메뉴관리', menuId: '009900103', upperMenuId: '0099001', menuUrl: '/system/menu/list.view', lvl: 3, menuPath: '운영관리/시스템관리/메뉴관리' },
+							{ menuNm: '화면관리', menuId: '009900104', upperMenuId: '0099001', menuUrl: '/system/screen/list.view', lvl: 3, menuPath: '운영관리/시스템관리/화면관리' },
+							{ menuNm: '권한그룹관리', menuId: '009900105', upperMenuId: '0099001', menuUrl: '/system/roleGroup/list.view', lvl: 3, menuPath: '운영관리/시스템관리/권한그룹관리' },
+							{ menuNm: '권한관리', menuId: '009900106', upperMenuId: '0099001', menuUrl: '/system/role/list.view', lvl: 3, menuPath: '운영관리/시스템관리/권한관리' },
 						]
 
 					}
@@ -173,7 +176,12 @@
 							const _viewer = $VIEW.find('.content_wrap');
 							_viewer.load(
 								menuUrl,
-								( e ) => {
+								{},
+								( responseText, textStatus, jqXHR  ) => {
+									if ( textStatus == 'error' ) {
+										UiUtils.alert('잠시 후 다시 시도해 주세요.');
+										return false;
+									}
 									_viewer.find('#contentTitle').html(menuNm);
 									_viewer.find("#breadcrumb").kendoBreadcrumb({
 										value: `Home/${menuPath}`,

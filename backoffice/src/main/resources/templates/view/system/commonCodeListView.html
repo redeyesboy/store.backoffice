@@ -73,7 +73,6 @@
 				const $VIEW = $('[data-view="commonCodeListView"]');
 
 				const fnDetailView = function ( requestData ) {
-					requestData.menuId = '009900104';
 					const _ajax = AjaxUtils.getHtml(
 						'POST',
 						'/system/code/detail.view',
@@ -159,12 +158,12 @@
 				$VIEW.find('.kendo-ui-select[name="div"]').kendoDropDownList({
 					autoWidth: true,
 					fillMode: 'outline',
-					dataTextField: 'code',
+					dataTextField: 'text',
 					dataValueField: 'value',
 					dataSource: new kendo.data.DataSource({
 						data: [
-							{ code: '코드', value: 'code' },
-							{ code: '코드명', value: 'name' }
+							{ text: '코드', value: 'code' },
+							{ text: '코드명', value: 'name' }
 						]
 					})
 				});
@@ -172,13 +171,13 @@
 				$VIEW.find('.kendo-ui-select[name="useYn"]').kendoDropDownList({
 					autoWidth: true,
 					fillMode: 'outline',
-					dataTextField: 'code',
+					dataTextField: 'text',
 					dataValueField: 'value',
-					optionLabel: { code: '선택', value: '' },
+					optionLabel: { text: '선택', value: '' },
 					dataSource: new kendo.data.DataSource({
 						data: [
-							{ code: '사용', value: 'Y' },
-							{ code: '미사용', value: 'N' }
+							{ text: '사용', value: 'Y' },
+							{ text: '미사용', value: 'N' }
 						]
 					})
 				});
@@ -240,8 +239,8 @@
 							width: '6em',
 							attributes: { style: 'text-align: center;' },
 							values: [
-								{ text: 'Yes', value: 'Y' },
-								{ text: 'No', value: 'N' },
+								{ text: '사용', value: 'Y' },
+								{ text: '미사용', value: 'N' },
 							]
 						},
 						{

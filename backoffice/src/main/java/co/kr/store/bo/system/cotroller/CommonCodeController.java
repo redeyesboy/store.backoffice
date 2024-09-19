@@ -23,7 +23,7 @@ public class CommonCodeController {
 
 	private final CommonCodeService commonCodeService;
 
-	@GetMapping({ "/system/code/list.view" })
+	@PostMapping({ "/system/code/list.view" })
 	public ModelAndView codeListView() {
 		return new ModelAndView("/view/system/commonCodeListView");
 	}

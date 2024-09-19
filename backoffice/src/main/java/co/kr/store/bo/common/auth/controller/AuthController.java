@@ -1,4 +1,4 @@
-package co.kr.store.bo.common.auth;
+package co.kr.store.bo.common.auth.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

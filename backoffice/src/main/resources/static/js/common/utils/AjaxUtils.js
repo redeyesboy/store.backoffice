@@ -52,7 +52,7 @@ class AjaxUtils {
 						if ( status == '200' ) {
 							resolve( data );
 						} else {
-							UiUtils.alert({ message: StringUtils.nvl(message, '잠시 후 다시 시도해 주세요.') })
+							UiUtils.alert(StringUtils.nvl(message, '잠시 후 다시 시도해 주세요.'));
 						}
 					}
 				},
@@ -61,7 +61,7 @@ class AjaxUtils {
 				},
 				error: ( jqXHR, textStatus, errorThrown  ) => {
 					if ( config.isErrorAlert ) {
-						UiUtils.alert({ message: '잠시 후 다시 시도해 주세요.' });
+						UiUtils.alert('잠시 후 다시 시도해 주세요.');
 					}
 					reject( jqXHR );
 				}

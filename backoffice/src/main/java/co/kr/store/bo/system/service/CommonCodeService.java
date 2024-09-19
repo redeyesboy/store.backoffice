@@ -77,6 +77,8 @@ public class CommonCodeService {
 		if ( Constants.MODE_DELETE.equals(mode) ) {
 			commonCodeDao.deleteCodeTxn(reqDto.toCodeTxn());
 		} else if ( Constants.MODE_CREATE.equals(mode) ) {
+			CommonCodeDto searchReqDto = new CommonCodeDto();
+			searchReqDto.setCodeId(reqDto.getCodeId());
 			commonCodeDao.insertCodeTxn(reqDto.toCodeTxn());
 		} else if ( Constants.MODE_UPDATE.equals(mode) ) {
 			commonCodeDao.updateCodeTxn(reqDto.toCodeTxn());

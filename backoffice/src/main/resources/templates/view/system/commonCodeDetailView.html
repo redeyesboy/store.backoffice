@@ -369,7 +369,7 @@
 								return false;
 							}
 							if ( codeIds.includes(codeId) ) {
-								UiUtils.alert({ message: `동일한 코드가 존재합니다.( 코드: ${codeId} )` });
+								UiUtils.alert(`동일한 코드가 존재합니다.( 코드: ${codeId} )`);
 								isBreak = true;
 								return false;
 							}
@@ -407,9 +407,14 @@
 								);
 								_ajax.then(
 									( { data } ) => {
-										const _el = $VIEW.closest('.popupWrap');
-										_el.attr('data-closeType', 'save');
-										_el.data("kendoDialog").close();
+										UiUtils.alert({
+											message: '저장처리되었습니다.',
+											fnClose: ( ) => {
+												const _el = $VIEW.closest('.popupWrap');
+												_el.attr('data-closeType', 'save');
+												_el.data("kendoDialog").close();
+											}
+										});
 									}
 								);
 							}
