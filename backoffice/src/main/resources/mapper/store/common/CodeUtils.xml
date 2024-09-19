@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.kr.store.bo.common.utils.dao.CodeUtilsDao">
+
+	<sql id="selectCommonCodeSql">
+
+		SELECT T1.CODE_ID AS GRP_CODE_ID
+		, T2.CODE_ID
+		, T2.CODE_NM
+		, T2.REF_VAL_01
+		, T2.REF_VAL_02
+		, T2.REF_VAL_03
+		, T2.REF_VAL_04
+		, T2.REF_VAL_05
+		FROM T_CODE_BAS T1
+		INNER JOIN T_CODE_TXN T2 ON T1.CODE_IDX = T2.CODE_IDX AND T2.DEL_YN = 'N'
+		WHERE T1.DEL_YN = 'N'
+		AND T1.CODE_ID = #{grpCodeId}
+		<if test="@co.kr.store.bo.common.utils.StringUtils@isNotEmpty(codeId)">
+			AND T2.CODE_ID = #{codeId}
+		</if>
+		<if test="@co.kr.store.bo.common.utils.StringUtils@equals('Y', useYn)">
+			AND T1.USE_YN = 'Y'
+			AND T2.USE_YN = 'Y'
+		</if>
+		ORDER BY T2.DISP_ORD ASC
+
+	</sql>
+
+	<select id="selectCommonCodeList"
+		parameterType="co.kr.store.bo.common.utils.dto.CommonCodeDto"
+		resultType="co.kr.store.bo.common.utils.dto.CommonCodeDto">
+
+		/* CodeUtils.selectCommonCodeList */
+		<include refid="selectCommonCodeSql"></include>
+
+	</select>
+
+	<select id="selectCommonCode"
+		parameterType="co.kr.store.bo.common.utils.dto.CommonCodeDto"
+		resultType="co.kr.store.bo.common.utils.dto.CommonCodeDto">
+
+		/* CodeUtils.selectCommonCode */
+		<include refid="selectCommonCodeSql"></include>
+
+	</select>
+
+</mapper>

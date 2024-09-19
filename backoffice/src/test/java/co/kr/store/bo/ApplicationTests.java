@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import co.kr.store.bo.common.utils.CodeUtils;
 import co.kr.store.bo.common.utils.RedisUtils;
 import co.kr.store.bo.system.dto.CommonCodeDto;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,26 @@ class ApplicationTests {
 	@Autowired
 	@Qualifier("jasyptEncryptor")
 	private PooledPBEStringEncryptor encryptor;
+
+	@Test
+	void codeTest() {
+		log.info("XXXXXXXXXX :: {}"
+		,CodeUtils.getCommonCodeList("1111111111111")
+				);
+
+
+		log.info("XXXXXXXXXX222222222 :: {}"
+				,CodeUtils.getCommonCodeList("1111111111111")
+						);
+
+		log.info("XXXXXXXXXX33333333333 :: {}"
+				,CodeUtils.getCommonCodeList("1111111111111", null)
+						);
+
+		log.info("XXXXXXXXXX44444444444 :: {}"
+				,CodeUtils.getCommonCodeList("1111111111111", null)
+						);
+	}
 
 //	@Test
 	void jasyptEncryption() {
@@ -34,7 +55,7 @@ class ApplicationTests {
 
 	}
 
-	@Test
+//	@Test
 	void redisTemplateTest() {
 
 		String key = "re_key";
