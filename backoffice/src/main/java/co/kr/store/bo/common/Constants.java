@@ -14,4 +14,8 @@ public class Constants {
 
 	public static final String MODE_DELETE = "D";
 
+	public static final String CACHE_NAME_COMMON_CODE = "CommonCode";
+
+	public static final String DEFAULT_CACHE_MANAGER = "cacheManager";
+
 }

@@ -24,6 +24,7 @@ class ApplicationTests {
 
 	@Test
 	void codeTest() {
+
 		log.info("XXXXXXXXXX :: {}"
 		,CodeUtils.getCommonCodeList("1111111111111")
 				);
@@ -34,11 +35,11 @@ class ApplicationTests {
 						);
 
 		log.info("XXXXXXXXXX33333333333 :: {}"
-				,CodeUtils.getCommonCodeList("1111111111111", null)
+				,CodeUtils.getAllCommonCodeList("1111111111111")
 						);
 
 		log.info("XXXXXXXXXX44444444444 :: {}"
-				,CodeUtils.getCommonCodeList("1111111111111", null)
+				,CodeUtils.getAllCommonCodeList("1111111111111")
 						);
 	}
 

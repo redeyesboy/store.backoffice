@@ -354,7 +354,6 @@
 						const _grid = $VIEW.find(".grid").data('kendoGrid');
 						const _dataSource = _grid.dataSource;
 						const codeIds = [];
-						for ( const rowData of _dataSource.data() ) { }
 						let isBreak = false;
 						$.each(_dataSource.data(), function ( idx, rowData ) {
 							const { codeId, codeNm } = rowData;
