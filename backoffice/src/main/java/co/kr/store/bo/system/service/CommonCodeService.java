@@ -9,7 +9,6 @@ import co.kr.store.bo.common.Constants;
 import co.kr.store.bo.common.exception.BizException;
 import co.kr.store.bo.common.utils.CodeUtils;
 import co.kr.store.bo.common.utils.ObjectUtils;
-import co.kr.store.bo.common.utils.service.CodeUtilsService;
 import co.kr.store.bo.core.dto.domain.CodeBas;
 import co.kr.store.bo.system.dao.CommonCodeDao;
 import co.kr.store.bo.system.dto.CommonCodeDto;

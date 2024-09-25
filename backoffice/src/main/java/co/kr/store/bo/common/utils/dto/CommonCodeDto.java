@@ -53,8 +53,6 @@ public class CommonCodeDto implements Serializable {
 		}
 		sb.append("-");
 		sb.append(StringUtils.nvl(this.useYn, "X"));
-//		this.cacheKey = sb.toString();
-//		return cacheKey;
 		return sb.toString();
 	}
 

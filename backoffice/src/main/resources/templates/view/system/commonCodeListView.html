@@ -275,9 +275,10 @@
 									return;
 								}
 								const _requestDatas = [];
-								for ( const { uid } of _selectedDatas ) {
+								for ( const { uid, grpCodeId } of _selectedDatas ) {
 									const _rowData = _dataSource.getByUid(uid);
 									_rowData.mode = 'D';
+									_rowData.codeId = grpCodeId;
 									_requestDatas.push(_rowData);
 								}
 								UiUtils.confirm({

@@ -70,7 +70,7 @@
 		<script th:inline="javascript" type="text/javascript">
 		/*<![CDATA[*/
 
-			$(document).ready(function () {
+			$(document).ready(function ( ) {
 
 				const $VIEW = $('[data-view="commonCodeDetailView"]');
 
@@ -135,7 +135,7 @@
 							const { grpCodeId, grpCodeNm, useYn, grpCodeDesc } = resDto;
 		 					$VIEW.find('[name="grpCodeId"]').data('kendoTextBox').value(grpCodeId);
 		 					$VIEW.find('[name="grpCodeNm"]').data('kendoTextBox').value(grpCodeNm);
-		 					$VIEW.find('#useYn').getKendoRadioGroup().value(grpCodeId);
+		 					$VIEW.find('#useYn').getKendoRadioGroup().value(useYn);
 		 					$VIEW.find('[name="grpCodeDesc"]').data('kendoTextArea').value(grpCodeDesc);
 							_dataSource.read();
 						}
@@ -316,9 +316,37 @@
 					fillMode: 'solid',
 					size: 'large',
 					click: ( e ) => {
-						const _el = $(e.target).closest('.popupWrap');
-						_el.attr('data-closeType', 'delete');
-						_el.data("kendoDialog").close();
+						UiUtils.confirm({
+							message: '삭제하시겠습니까?',
+							fnAgree: ( e ) => {
+								const _ajax = AjaxUtils.getJson(
+									'POST',
+									'/system/code/delete.do',
+									{
+										contentType: 'application/json',
+										data: JSON.stringify([
+											{
+												mode: 'D',
+												codeIdx: CODE_IDX,
+												codeId: $VIEW.find('[name="grpCodeId"]').data('kendoTextBox').value()
+											}
+										])
+									}
+								);
+								_ajax.then(
+									( result ) => {
+										UiUtils.alert({
+											message: '삭제 처리되었습니다.',
+											fnClose: ( ) => {
+												const _el = $VIEW.closest('.popupWrap');
+												_el.attr('data-closeType', 'delete');
+												_el.data("kendoDialog").close();
+											}
+										});
+									}
+								);
+							}
+						});
 					}
 				});
 
